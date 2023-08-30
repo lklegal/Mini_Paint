@@ -25,6 +25,24 @@ float** MatMul(float a[3][3], float b[3][3]){
     return resultado;
 }
 
+//retorna o resultado da multiplicação de uma matriz 3x3 por um vetor, mas apenas o x e y do vetor são retornados
+float* MatVecMul(float a[3][3], float *b){
+    float soma = 0.0;
+    
+    //cria o vetor resultante
+    float *resultado = (float*)malloc(2*sizeof(float));
+
+    //multiplica a matriz pelo vetor
+    for(int i = 0; i < 2; i++){
+        soma = 0.0;
+        for(j = 0, j < 3; j++){
+            soma += a[i][j] * b[j];
+        }
+        resultado[i] = soma;
+    }
+    return resultado;
+}
+
 int main(){
     float a[3][3] = {
         {1.1, 3.5, 3.7},
