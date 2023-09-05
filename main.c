@@ -1,49 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "cabecalhos.h"
+#include <GL/glut.h>
 
-//retorna o resultado da multiplicação de duas matrizes 3x3
-float** MatMul(float a[3][3], float b[3][3]){
-    //cria a matriz resultante
-    float **resultado = (float**)malloc(3*sizeof(float));
-    for(int i = 0; i < 3; i++){
-        resultado[i] = (float*)malloc(3*sizeof(float));
-    }
-
-    float soma = 0.0;
-
-    //multiplica as matrizes
-    for(int i = 0; i < 3; i++){
-        for(int j = 0; j < 3; j++){
-            soma = 0.0;
-            for(int k = 0; k < 3; k++){
-                soma += a[i][k] * b[k][j];
-            }
-            //printf("%.1f ", soma);
-            resultado[i][j] = soma;
-        }
-    }
-    return resultado;
-}
-
-//retorna o resultado da multiplicação de uma matriz 3x3 por um vetor, mas apenas o x e y do vetor são retornados
-float* MatVecMul(float a[3][3], float *b){
-    float soma = 0.0;
-    
-    //cria o vetor resultante
-    float *resultado = (float*)malloc(2*sizeof(float));
-
-    //multiplica a matriz pelo vetor
-    for(int i = 0; i < 2; i++){
-        soma = 0.0;
-        for(j = 0, j < 3; j++){
-            soma += a[i][j] * b[j];
-        }
-        resultado[i] = soma;
-    }
-    return resultado;
-}
-
-int main(){
+int main(int argc, char** argv){
+    /*
     float a[3][3] = {
         {1.1, 3.5, 3.7},
         {4.3, 5.7, 9.9},
@@ -62,5 +23,19 @@ int main(){
         }
         printf("\n");
     }
-    return 0;
+    */
+
+    obj **listaDeObjetos = criarListaDeObjetos();
+    adicionarVertice(listaDeObjetos, 1.5, 3.97);
+
+    glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_SINGLE| GLUT_RGB);
+	glutInitWindowSize(400, 300);
+	glutInitWindowPosition(200, 0);
+	glutCreateWindow("Teste");
+	
+	init();
+	glutDisplayFunc(display);
+	glutMainLoop();
+	return 0;
 }
