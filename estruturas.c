@@ -29,6 +29,7 @@ obj* adicionarObjeto(obj **listaDeObjetos){
     novo->ponto = ug.adicionandoPonto;
     novo->reta = ug.adicionandoReta;
     novo->poligono = ug.adicionandoPoligono;
+    novo->incompleto = 1;
 	novo->vertices = criarListaDeVerticesDoObjeto();
 	novo->prox = *listaDeObjetos;
 	*listaDeObjetos = novo;

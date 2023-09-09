@@ -4,6 +4,7 @@ struct Objeto{
     char ponto;
     char reta;
     char poligono;
+    char incompleto;
 };
 
 struct VerticeObjeto{
@@ -22,6 +23,7 @@ struct UtilidadesGlobais
     char adicionandoReta;
     char adicionandoPoligono;
 	obj **listaDeObjetos;
+    obj *objetoSendoCriado;
 };
 
 extern struct UtilidadesGlobais ug;

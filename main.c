@@ -25,10 +25,10 @@ int main(int argc, char** argv){
     }
     */
 
-    obj **listaDeObjetos = criarListaDeObjetos();
+    ug.listaDeObjetos = criarListaDeObjetos();
 
     glutInit(&argc, argv);
-	init(listaDeObjetos);
+	init();
 	glutMainLoop();
 	return 0;
 }
