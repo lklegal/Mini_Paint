@@ -2,17 +2,6 @@
 #include <stdlib.h>
 #include "cabecalhos.h"
 
-struct VerticeObjeto{
-    float x;
-    float y;
-	struct VerticeObjeto *prox;
-};
-
-struct Objeto{
-	struct VerticeObjeto **vertices;
-	struct Objeto *prox;
-};
-
 obj** criarListaDeObjetos(){
 	obj **listaDeObjetos = (obj**)malloc(sizeof(obj*));
 	if(listaDeObjetos != NULL){
@@ -35,24 +24,28 @@ vertice** criarListaDeVerticesDoObjeto(){
 	}
 }
 
-void adicionarObjeto(obj **listaDeObjetos){
+obj* adicionarObjeto(obj **listaDeObjetos){
 	obj *novo = (obj*)malloc(sizeof(obj));
+    novo->ponto = ug.adicionandoPonto;
+    novo->reta = ug.adicionandoReta;
+    novo->poligono = ug.adicionandoPoligono;
 	novo->vertices = criarListaDeVerticesDoObjeto();
 	novo->prox = *listaDeObjetos;
 	*listaDeObjetos = novo;
+    return novo;
 }
 
-void adicionarVertice(obj **listaDeObjetos, float x, float y){
+void adicionarVertice(obj **listaDeObjetos, obj *objetoEspecifico, float x, float y){
     //Caso esse seja o primeiro vértice do primeiro objeto
 	if(*listaDeObjetos == NULL){
-		adicionarObjeto(listaDeObjetos);
+		objetoEspecifico = adicionarObjeto(listaDeObjetos);
 	}
-    vertice **primeiraListaDeVertices = (*listaDeObjetos)->vertices;
+    vertice **verticesDoObjeto = objetoEspecifico->vertices;
 	vertice *novo = (vertice*)malloc(sizeof(vertice));
     novo->x = x;
     novo->y = y;
-	novo->prox = *primeiraListaDeVertices;
-	*primeiraListaDeVertices = novo;
+	novo->prox = *verticesDoObjeto;
+	*verticesDoObjeto = novo;
 }
 
 void removerObjeto(obj **listaDeObjetos, int posicao){

@@ -26,16 +26,9 @@ int main(int argc, char** argv){
     */
 
     obj **listaDeObjetos = criarListaDeObjetos();
-    adicionarVertice(listaDeObjetos, 1.5, 3.97);
 
     glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_SINGLE| GLUT_RGB);
-	glutInitWindowSize(400, 300);
-	glutInitWindowPosition(200, 0);
-	glutCreateWindow("Teste");
-	
-	init();
-	glutDisplayFunc(display);
+	init(listaDeObjetos);
 	glutMainLoop();
 	return 0;
 }
