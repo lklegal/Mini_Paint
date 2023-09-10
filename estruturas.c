@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include "cabecalhos.h"
 
+typedef struct{
+    float dados[3][3];
+}matriz;
+
 obj** criarListaDeObjetos(){
 	obj **listaDeObjetos = (obj**)malloc(sizeof(obj*));
 	if(listaDeObjetos != NULL){
@@ -26,9 +30,9 @@ vertice** criarListaDeVerticesDoObjeto(){
 
 obj* adicionarObjeto(obj **listaDeObjetos){
 	obj *novo = (obj*)malloc(sizeof(obj));
-    novo->ponto = ug.adicionandoPonto;
-    novo->reta = ug.adicionandoReta;
-    novo->poligono = ug.adicionandoPoligono;
+    novo->ponto = ug.estado == CRIAR_PONTO;
+    novo->reta = ug.estado == CRIAR_RETA;
+    novo->poligono = ug.estado == CRIAR_POLIGONO;
     novo->incompleto = 1;
 	novo->vertices = criarListaDeVerticesDoObjeto();
 	novo->prox = *listaDeObjetos;
@@ -98,4 +102,36 @@ float* MatVecMul(float a[3][3], float *b){
         resultado[i] = soma;
     }
     return resultado;
+}
+
+vertice calcularCentroide(){
+    vertice centroide;
+    if(ug.escolhidos[1] == NULL){
+        centroide.x = (ug.escolhidos[0])->x;
+        centroide.y = (ug.escolhidos[0])->y;
+    }else if(ug.escolhidos[0] != ug.escolhidos[1]){
+        centroide.x = ((ug.escolhidos[0])->x + (ug.escolhidos[1])->x) / 2.0;
+        centroide.y = ((ug.escolhidos[0])->y + (ug.escolhidos[1])->y) / 2.0;
+    }else{
+        int n = 0;
+        float somaX = 0.0;
+        float somaY = 0.0;
+        vertice *aux = ug.escolhidos[0];
+        while(aux != NULL){
+            somaX += aux->x;
+            somaY += aux->y;
+            n++;
+            aux = aux->prox;
+        }
+        centroide.x = somaX / (float)n;
+        centroide.y = somaY / (float)n;
+    }
+
+    return centroide;
+}
+
+matriz construirMatriz(){
+    matriz matrix;
+
+    return matrix;
 }

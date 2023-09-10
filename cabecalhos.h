@@ -9,8 +9,9 @@
 #define ESCALAR 9
 #define ESPELHAR_X 10
 #define ESPELHAR_Y 11
-#define CISALHAR 12
-#define DELETAR 13
+#define CISALHAR_X 12
+#define CISALHAR_Y 13
+#define DELETAR 14
 
 struct Objeto{
 	struct VerticeObjeto **vertices;
@@ -33,18 +34,11 @@ typedef struct Objeto obj;
 //será usado como uma variável global para permitir a comunicação entre funções callback e o restante
 struct UtilidadesGlobais
 {
-    char adicionandoPonto;
-    char adicionandoReta;
-    char adicionandoPoligono;
-    char selecionandoPonto;
-    char selecionandoReta;
-    char selecionandoPoligono;
-    char transladando;
-    char rotacionando;
-    char escalando;
-    char cisalhando;
+    char estado;
 	obj **listaDeObjetos;
     obj *objetoSendoCriado;
+    vertice** escolhidos;
+    char transladando;
     char podeExibirMenu;
 };
 
@@ -61,3 +55,4 @@ float** MatMul(float a[3][3], float b[3][3]);
 float* MatVecMul(float a[3][3], float *b);
 void criarMenu();
 void HabilitarDesabilitarMenu();
+vertice calcularCentroide();

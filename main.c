@@ -26,10 +26,10 @@ int main(int argc, char** argv){
     */
 
     ug.listaDeObjetos = criarListaDeObjetos();
-    ug.adicionandoPonto = 1;
-	ug.adicionandoReta = 0;
-	ug.adicionandoPoligono = 0;
-    ug.podeExibirMenu = 0;
+    ug.escolhidos = (vertice**)malloc(2*sizeof(vertice*));
+    ug.estado = CRIAR_PONTO;
+    ug.podeExibirMenu = 1;
+    ug.transladando = 0;
     glutInit(&argc, argv);
 	init();
     criarMenu();
