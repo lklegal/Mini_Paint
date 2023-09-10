@@ -1,3 +1,17 @@
+#define CRIAR_PONTO 1
+#define CRIAR_RETA 2
+#define CRIAR_POLIGONO 3
+#define SELECIONAR_PONTO 4
+#define SELECIONAR_RETA 5
+#define SELECIONAR_POLIGONO 6
+#define TRANSLADAR 7
+#define ROTACIONAR 8
+#define ESCALAR 9
+#define ESPELHAR_X 10
+#define ESPELHAR_Y 11
+#define CISALHAR 12
+#define DELETAR 13
+
 struct Objeto{
 	struct VerticeObjeto **vertices;
 	struct Objeto *prox;
@@ -22,8 +36,16 @@ struct UtilidadesGlobais
     char adicionandoPonto;
     char adicionandoReta;
     char adicionandoPoligono;
+    char selecionandoPonto;
+    char selecionandoReta;
+    char selecionandoPoligono;
+    char transladando;
+    char rotacionando;
+    char escalando;
+    char cisalhando;
 	obj **listaDeObjetos;
     obj *objetoSendoCriado;
+    char podeExibirMenu;
 };
 
 extern struct UtilidadesGlobais ug;
@@ -37,3 +59,5 @@ int init();
 void display();
 float** MatMul(float a[3][3], float b[3][3]);
 float* MatVecMul(float a[3][3], float *b);
+void criarMenu();
+void HabilitarDesabilitarMenu();

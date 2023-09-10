@@ -26,9 +26,13 @@ int main(int argc, char** argv){
     */
 
     ug.listaDeObjetos = criarListaDeObjetos();
-
+    ug.adicionandoPonto = 1;
+	ug.adicionandoReta = 0;
+	ug.adicionandoPoligono = 0;
+    ug.podeExibirMenu = 0;
     glutInit(&argc, argv);
 	init();
+    criarMenu();
 	glutMainLoop();
 	return 0;
 }
