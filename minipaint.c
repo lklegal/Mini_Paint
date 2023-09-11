@@ -181,6 +181,7 @@ void escolherAlgo(int mx, int my){
 					printf("Escolheu o ponto (%.1f, %.1f)\n", aux2->x, aux2->y);
 					ug.escolhidos[0] = aux2;
 					ug.escolhidos[1] = NULL;
+					ug.objetoSelecionado = aux;
 					return;
 				}
 			}
@@ -196,14 +197,14 @@ void escolherAlgo(int mx, int my){
 						aux2->prox->x, aux2->prox->y);
 						ug.escolhidos[0] = aux2;
 						ug.escolhidos[1] = aux2->prox;
-						return;
 					}else if(aux->poligono){
 						printf("Escolheu a reta de vértices (%.1f, %.1f), (%.1f, %.1f)\n", aux2->x, aux2->y,
 						(*(aux->vertices))->x, (*(aux->vertices))->y);
 						ug.escolhidos[0] = aux2;
 						ug.escolhidos[1] = *(aux->vertices);
-						return;
 					}
+					ug.objetoSelecionado = aux;
+					return;
 				}
 			}
 			if(ug.estado == SELECIONAR_POLIGONO){
@@ -213,6 +214,7 @@ void escolherAlgo(int mx, int my){
 				escolheu = pickPoligono(aux, ((float)mx)/4.0, (600.0-(float)my)/4.0);
 				if(escolheu){
 					aux2 = *(aux->vertices);
+					printf("Escolheu o polígono de vértices ");
 					while(aux2 != NULL){
 						printf("(%.1f, %.1f) ", aux2->x, aux2->y);
 						aux2 = aux2->prox;
@@ -221,6 +223,7 @@ void escolherAlgo(int mx, int my){
 					ug.escolhidos[0] = *(aux->vertices);
 					//gambiarra pra saber se é um ponto selecionado ou um polígono
 					ug.escolhidos[1] = *(aux->vertices);
+					ug.objetoSelecionado = aux;
 					return;
 				}else{
 					//Para polígonos é melhor fazer o laço interno na função pickPoligono
@@ -231,6 +234,41 @@ void escolherAlgo(int mx, int my){
 		}
 		aux = aux->prox;
 	}
+}
+
+void casosMatVecMul(float matrizTransformacao[3][3]){
+	float vetorPonto[3] = {0, 0, 1};
+	float *resultado;
+	if(ug.escolhidos[1] == NULL){
+		vetorPonto[0] = (ug.escolhidos[0])->x;
+		vetorPonto[1] = (ug.escolhidos[0])->y;
+		resultado = MatVecMul(matrizTransformacao, vetorPonto);
+		(ug.escolhidos[0])->x = resultado[0];
+		(ug.escolhidos[0])->y = resultado[1];
+	}else if(ug.escolhidos[0] != ug.escolhidos[1]){
+		vetorPonto[0] = (ug.escolhidos[0])->x;
+		vetorPonto[1] = (ug.escolhidos[0])->y;
+		resultado = MatVecMul(matrizTransformacao, vetorPonto);
+		(ug.escolhidos[0])->x = resultado[0];
+		(ug.escolhidos[0])->y = resultado[1];
+		vetorPonto[0] = (ug.escolhidos[1])->x;
+		vetorPonto[1] = (ug.escolhidos[1])->y;
+		resultado = MatVecMul(matrizTransformacao, vetorPonto);
+		(ug.escolhidos[1])->x = resultado[0];
+		(ug.escolhidos[1])->y = resultado[1];
+	}else{
+		vertice *aux = ug.escolhidos[0];
+		while(aux != NULL){
+			vetorPonto[0] = aux->x;
+			vetorPonto[1] = aux->y;
+			resultado = MatVecMul(matrizTransformacao, vetorPonto);
+			aux->x = resultado[0];
+			aux->y = resultado[1];
+			aux = aux->prox;
+		}
+	}
+	free(resultado);
+	glutPostRedisplay();
 }
 
 //implementação da translação em ponto, reta e polígono
@@ -244,50 +282,11 @@ void movimentoMouse(int x, int y) {
 			{0.0, 1.0, my - centroide.y},
 			{0.0, 0.0, 1.0}
 		};
-		float vetorPonto[3] = {0, 0, 1};
-		float *resultado;
-		if(ug.escolhidos[1] == NULL){
-			vetorPonto[0] = (ug.escolhidos[0])->x;
-			vetorPonto[1] = (ug.escolhidos[0])->y;
-			resultado = MatVecMul(matrizTranslacao, vetorPonto);
-			(ug.escolhidos[0])->x = resultado[0];
-			(ug.escolhidos[0])->y = resultado[1];
-		}else if(ug.escolhidos[0] != ug.escolhidos[1]){
-			vetorPonto[0] = (ug.escolhidos[0])->x;
-			vetorPonto[1] = (ug.escolhidos[0])->y;
-			resultado = MatVecMul(matrizTranslacao, vetorPonto);
-			(ug.escolhidos[0])->x = resultado[0];
-			(ug.escolhidos[0])->y = resultado[1];
-			vetorPonto[0] = (ug.escolhidos[1])->x;
-			vetorPonto[1] = (ug.escolhidos[1])->y;
-			resultado = MatVecMul(matrizTranslacao, vetorPonto);
-			(ug.escolhidos[1])->x = resultado[0];
-			(ug.escolhidos[1])->y = resultado[1];
-		}else{
-			vertice *aux = ug.escolhidos[0];
-			while(aux != NULL){
-				vetorPonto[0] = aux->x;
-				vetorPonto[1] = aux->y;
-				resultado = MatVecMul(matrizTranslacao, vetorPonto);
-				aux->x = resultado[0];
-				aux->y = resultado[1];
-				aux = aux->prox;
-			}
-			printf("\n");
-		}
-		free(resultado);
-		glutPostRedisplay();
+		casosMatVecMul(matrizTranslacao);
 	}
 }
 
 void mouse(int botao, int clicouOuSoltou, int x, int y) {
-	if(botao == 3){
-		printf("ha");
-	}
-	if(botao == 4){
-		printf("he");
-	}
-	
     if (botao == GLUT_LEFT_BUTTON && clicouOuSoltou == GLUT_DOWN) {
         //printf("Clique do mouse em (%d, %d)\n", x, y);
 		if(ug.estado == CRIAR_PONTO){
@@ -322,6 +321,100 @@ void mouse(int botao, int clicouOuSoltou, int x, int y) {
 			}
 		}
     }
+
+	if(!(ug.estado == ROTACIONAR || ug.estado == ESCALAR || ug.estado == CISALHAR_X || ug.estado == CISALHAR_Y)){
+		return;
+	}
+
+	int cimaOuBaixo = 0;
+
+	if(botao == 3){
+		cimaOuBaixo = 1;
+	}
+	if(botao == 4){
+		cimaOuBaixo = -1;
+	}
+
+	if(cimaOuBaixo != 0){
+		//rotaciona em incrementos de 1 grau
+		float senoIncremento = -0.017452 * cimaOuBaixo;
+		float cossenoIncremento = 0.999847;
+
+		float fatorCisalhamento = 0.1 * cimaOuBaixo;
+		float fatorEscala;
+		if(cimaOuBaixo == 1){
+			fatorEscala = 1.1;
+		}else{
+			fatorEscala = 1/1.1;
+		}
+
+		float eixoEspelhamento = 1.0;
+		if(ug.estado == ESPELHAR_Y){
+            eixoEspelhamento = -1.0;
+        }
+		vertice centroide = calcularCentroide();
+		float primeiraMatriz[3][3] = {
+			{1.0, 0.0, centroide.x},
+			{0.0, 1.0, centroide.y},
+			{0.0, 0.0, 1.0}
+		};
+		float segundaMatriz[3][3];
+		float matrizIntermediaria[3][3];
+		float terceiraMatriz[3][3] = {
+			{1.0, 0.0, -centroide.x},
+			{0.0, 1.0, -centroide.y},
+			{0.0, 0.0, 1.0}
+		};
+		float matrizResultante[3][3];
+		if(ug.estado == ROTACIONAR){
+			segundaMatriz[0][0] = cossenoIncremento;
+			segundaMatriz[0][1] = -senoIncremento;
+			segundaMatriz[0][2] = 0.0;
+			segundaMatriz[1][0] = senoIncremento;
+			segundaMatriz[1][1] = cossenoIncremento;
+			segundaMatriz[1][2] = 0.0;
+			segundaMatriz[2][0] = 0.0;
+			segundaMatriz[2][1] = 0.0;
+			segundaMatriz[2][2] = 1.0;
+		}
+		if(ug.estado == ESCALAR){
+			segundaMatriz[0][0] = fatorEscala;
+			segundaMatriz[0][1] = 0.0;
+			segundaMatriz[0][2] = 0.0;
+			segundaMatriz[1][0] = 0.0;
+			segundaMatriz[1][1] = fatorEscala;
+			segundaMatriz[1][2] = 0.0;
+			segundaMatriz[2][0] = 0.0;
+			segundaMatriz[2][1] = 0.0;
+			segundaMatriz[2][2] = 1.0;
+		}
+		if(ug.estado == CISALHAR_X){
+			segundaMatriz[0][0] = 1.0;
+			segundaMatriz[0][1] = fatorCisalhamento;
+			segundaMatriz[0][2] = 0.0;
+			segundaMatriz[1][0] = 0.0;
+			segundaMatriz[1][1] = 1.0;
+			segundaMatriz[1][2] = 0.0;
+			segundaMatriz[2][0] = 0.0;
+			segundaMatriz[2][1] = 0.0;
+			segundaMatriz[2][2] = 1.0;
+		}
+		if(ug.estado == CISALHAR_Y){
+			segundaMatriz[0][0] = 1.0;
+			segundaMatriz[0][1] = 0.0;
+			segundaMatriz[0][2] = 0.0;
+			segundaMatriz[1][0] = fatorCisalhamento;
+			segundaMatriz[1][1] = 1.0;
+			segundaMatriz[1][2] = 0.0;
+			segundaMatriz[2][0] = 0.0;
+			segundaMatriz[2][1] = 0.0;
+			segundaMatriz[2][2] = 1.0;
+		}
+
+		MatMul(primeiraMatriz, segundaMatriz, matrizIntermediaria);
+		MatMul(matrizIntermediaria, terceiraMatriz, matrizResultante);
+		casosMatVecMul(matrizResultante);
+	}
 }
 
 void display(){

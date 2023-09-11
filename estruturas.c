@@ -36,6 +36,11 @@ obj* adicionarObjeto(obj **listaDeObjetos){
     novo->incompleto = 1;
 	novo->vertices = criarListaDeVerticesDoObjeto();
 	novo->prox = *listaDeObjetos;
+    if(*listaDeObjetos == NULL){
+        novo->id = 0;
+    }else{
+        novo->id = (*listaDeObjetos)->id + 1;
+    }
 	*listaDeObjetos = novo;
     return novo;
 }
@@ -53,37 +58,46 @@ void adicionarVertice(obj **listaDeObjetos, obj *objetoEspecifico, float x, floa
 	*verticesDoObjeto = novo;
 }
 
-void removerObjeto(obj **listaDeObjetos, int posicao){
-	if(*listaDeObjetos != NULL){
-		obj *aux = *listaDeObjetos;
-	}
-	else{
-		printf("Sem objetos para remover!");
-	}
+void removerObjeto(){
+	obj *ant = *(ug.listaDeObjetos);
+    if((ug.objetoSelecionado)->id != (*(ug.listaDeObjetos))->id){
+        while(ant->prox->id != (ug.objetoSelecionado)->id){
+            printf("%d %d\n", ant->prox->id, (ug.objetoSelecionado)->id);
+            ant = ant->prox;
+        }
+    }else{
+        ant = NULL;
+    }
+    vertice *aux = *(ug.objetoSelecionado->vertices);
+    vertice *proxaux;
+    while(aux != NULL){
+        proxaux = aux->prox;
+        free(aux);
+        aux = proxaux;
+    }
+    free((ug.objetoSelecionado)->vertices);
+    if(ant != NULL){
+        ant->prox = (ug.objetoSelecionado)->prox;
+    }else{
+        *(ug.listaDeObjetos) = (ug.objetoSelecionado)->prox;
+    }
+    free(ug.objetoSelecionado);
+    ug.objetoSelecionado = NULL;
 }
 
 //retorna o resultado da multiplicação de duas matrizes 3x3
-float** MatMul(float a[3][3], float b[3][3]){
-    //cria a matriz resultante
-    float **resultado = (float**)malloc(3*sizeof(float));
-    for(int i = 0; i < 3; i++){
-        resultado[i] = (float*)malloc(3*sizeof(float));
-    }
-
+void MatMul(float a[3][3], float b[3][3], float resultado[3][3]){
     float soma = 0.0;
 
-    //multiplica as matrizes
     for(int i = 0; i < 3; i++){
         for(int j = 0; j < 3; j++){
             soma = 0.0;
             for(int k = 0; k < 3; k++){
                 soma += a[i][k] * b[k][j];
             }
-            //printf("%.1f ", soma);
             resultado[i][j] = soma;
         }
     }
-    return resultado;
 }
 
 //retorna o resultado da multiplicação de uma matriz 3x3 por um vetor, mas apenas o x e y do vetor são retornados
@@ -109,6 +123,10 @@ vertice calcularCentroide(){
     if(ug.escolhidos[1] == NULL){
         centroide.x = (ug.escolhidos[0])->x;
         centroide.y = (ug.escolhidos[0])->y;
+        if(ug.estado == ROTACIONAR){
+            centroide.x = 0.0;
+            centroide.y = 0.0;
+        }
     }else if(ug.escolhidos[0] != ug.escolhidos[1]){
         centroide.x = ((ug.escolhidos[0])->x + (ug.escolhidos[1])->x) / 2.0;
         centroide.y = ((ug.escolhidos[0])->y + (ug.escolhidos[1])->y) / 2.0;
@@ -128,10 +146,4 @@ vertice calcularCentroide(){
     }
 
     return centroide;
-}
-
-matriz construirMatriz(){
-    matriz matrix;
-
-    return matrix;
 }

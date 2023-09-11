@@ -20,6 +20,7 @@ struct Objeto{
     char reta;
     char poligono;
     char incompleto;
+    int id;
 };
 
 struct VerticeObjeto{
@@ -37,6 +38,7 @@ struct UtilidadesGlobais
     char estado;
 	obj **listaDeObjetos;
     obj *objetoSendoCriado;
+    obj *objetoSelecionado;
     vertice** escolhidos;
     char transladando;
     char podeExibirMenu;
@@ -48,11 +50,12 @@ obj** criarListaDeObjetos();
 vertice** criarListaDeVerticesDoObjeto();
 obj* adicionarObjeto(obj **listaDeObjetos);
 void adicionarVertice(obj **listaDeObjetos, obj *objetoEspecifico, float x, float y);
-void removerObjeto(obj **listaDeObjetos, int posicao);
+void removerObjeto();
 int init();
 void display();
-float** MatMul(float a[3][3], float b[3][3]);
+void MatMul(float a[3][3], float b[3][3], float resultado[3][3]);
 float* MatVecMul(float a[3][3], float *b);
 void criarMenu();
 void HabilitarDesabilitarMenu();
 vertice calcularCentroide();
+void casosMatVecMul(float matrizTransformacao[3][3]);

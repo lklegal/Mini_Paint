@@ -9,6 +9,7 @@ void menuPrincipalCallback(int opcao) {
     || opcao == SELECIONAR_PONTO || opcao == SELECIONAR_RETA || opcao == SELECIONAR_POLIGONO){
         ug.escolhidos[0] = NULL;
         ug.escolhidos[1] = NULL;
+        ug.objetoSelecionado = NULL;
         return;
     }
     if(ug.escolhidos[0] == NULL){
@@ -16,57 +17,69 @@ void menuPrincipalCallback(int opcao) {
         printf("Nada foi selecionado.\n");
         return;
     }
-    if(opcao == DELETAR){
-        ug.estado = estadoAnterior;
-        return;
-    }
-    if((ug.escolhidos[1]) == NULL && opcao != TRANSLADAR && opcao != ROTACIONAR){
+    if((ug.escolhidos[1]) == NULL && opcao != TRANSLADAR && opcao != ROTACIONAR && opcao != DELETAR){
         ug.estado = estadoAnterior;
         printf("Não é possível fazer isso com pontos.\n");
         return;
     }
-    switch (opcao) {
-        /*
-        case CRIAR_PONTO:
-            ug.estado = CRIAR_PONTO;
-            break;
-        case CRIAR_RETA:
-            ug.estado = CRIAR_RETA;
-            break;
-        case CRIAR_POLIGONO:
-            ug.estado = CRIAR_POLIGONO;
-            break;
-        case SELECIONAR_PONTO:
-            ug.estado = SELECIONAR_PONTO;
-            break;
-        case SELECIONAR_RETA:
-            ug.estado = SELECIONAR_RETA;
-            break;
-        case SELECIONAR_POLIGONO:
-            ug.estado = SELECIONAR_POLIGONO;
-            break;
-        */
-        /*
-        case TRANSLADAR:
-            break;
-        case ROTACIONAR:
-            ug.estado = ROTACIONAR;
-            break;
-        */
-        case ESCALAR:
-            break;
-        case ESPELHAR_X:
-            ug.estado = estadoAnterior;
-            break;
-        case ESPELHAR_Y:
-            ug.estado = estadoAnterior;
-            break;
-        case CISALHAR_X:
-            ug.estado = CISALHAR_X;
-            break;
-        case CISALHAR_Y:
-            ug.estado = CISALHAR_Y;
-            break;
+    
+    if(opcao == ESPELHAR_X || opcao == ESPELHAR_Y){
+        ug.estado = estadoAnterior;
+        float eixoEspelhamento = 1.0;
+        if(ug.estado == ESPELHAR_Y){
+            eixoEspelhamento = -1.0;
+        }
+        float segundaMatriz[3][3];
+
+        segundaMatriz[0][0] = -1.0*eixoEspelhamento;
+        segundaMatriz[0][1] = 0.0;
+        segundaMatriz[0][2] = 0.0;
+        segundaMatriz[1][0] = 0.0;
+        segundaMatriz[1][1] = 1.0*eixoEspelhamento;
+        segundaMatriz[1][2] = 0.0;
+        segundaMatriz[2][0] = 0.0;
+        segundaMatriz[2][1] = 0.0;
+        segundaMatriz[2][2] = 1.0;
+
+        vertice centroide = calcularCentroide();
+
+        float primeiraMatriz[3][3] = {
+            {1.0, 0.0, centroide.x},
+            {0.0, 1.0, centroide.y},
+            {0.0, 0.0, 1.0}
+        };
+
+        float matrizIntermediaria[3][3];
+        float terceiraMatriz[3][3] = {
+            {1.0, 0.0, -centroide.x},
+            {0.0, 1.0, -centroide.y},
+            {0.0, 0.0, 1.0}
+        };
+        float matrizResultante[3][3];
+
+        MatMul(primeiraMatriz, segundaMatriz, matrizIntermediaria);
+        MatMul(matrizIntermediaria, terceiraMatriz, matrizResultante);
+        casosMatVecMul(matrizResultante);
+    }
+
+    if(opcao == DELETAR){
+        ug.estado = estadoAnterior;
+        if(!((ug.objetoSelecionado)->ponto) && ug.escolhidos[1] == NULL){
+            ug.escolhidos[0] = NULL;
+            ug.escolhidos[1] = NULL;
+            printf("Apenas pontos isolados podem ser deletados.\n");
+            return;
+        }
+        if((ug.objetoSelecionado)->poligono && ug.escolhidos[1] != ug.escolhidos[0]){
+            ug.escolhidos[0] = NULL;
+            ug.escolhidos[1] = NULL;
+            printf("Apenas linhas isoladas podem ser deletadas.\n");
+            return;
+        }
+        ug.escolhidos[0] = NULL;
+        ug.escolhidos[1] = NULL;
+        removerObjeto();
+        glutPostRedisplay();
     }
 }
 
