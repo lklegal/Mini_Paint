@@ -62,7 +62,6 @@ void removerObjeto(){
 	obj *ant = *(ug.listaDeObjetos);
     if((ug.objetoSelecionado)->id != (*(ug.listaDeObjetos))->id){
         while(ant->prox->id != (ug.objetoSelecionado)->id){
-            printf("%d %d\n", ant->prox->id, (ug.objetoSelecionado)->id);
             ant = ant->prox;
         }
     }else{
@@ -120,17 +119,24 @@ float* MatVecMul(float a[3][3], float *b){
 
 vertice calcularCentroide(){
     vertice centroide;
+    //centroide de ponto
     if(ug.escolhidos[1] == NULL){
+        //se não for rotação é o própri ponto
         centroide.x = (ug.escolhidos[0])->x;
         centroide.y = (ug.escolhidos[0])->y;
+        //senão, é a origem
         if(ug.estado == ROTACIONAR){
             centroide.x = 0.0;
             centroide.y = 0.0;
         }
-    }else if(ug.escolhidos[0] != ug.escolhidos[1]){
+    }
+    //centroide de reta
+    else if(ug.escolhidos[0] != ug.escolhidos[1]){
         centroide.x = ((ug.escolhidos[0])->x + (ug.escolhidos[1])->x) / 2.0;
         centroide.y = ((ug.escolhidos[0])->y + (ug.escolhidos[1])->y) / 2.0;
-    }else{
+    }
+    //centroide de polígono
+    else{
         int n = 0;
         float somaX = 0.0;
         float somaY = 0.0;

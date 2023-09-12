@@ -13,16 +13,22 @@
 #define CISALHAR_Y 13
 #define DELETAR 14
 
+//objeto que contém os vértices: pode ser ponto, reta ou polígono
 struct Objeto{
+    //ponteiro para a lista interna de vértices
 	struct VerticeObjeto **vertices;
 	struct Objeto *prox;
     char ponto;
     char reta;
     char poligono;
+    /*no caso de retas e polígonos que não foram finalizados, útil para
+    definir a função do botão direito do mouse*/
     char incompleto;
+    //id do objeto, útil na hora de deletar ele
     int id;
 };
 
+//vértice
 struct VerticeObjeto{
     float x;
     float y;
@@ -32,15 +38,26 @@ struct VerticeObjeto{
 typedef struct VerticeObjeto vertice;
 typedef struct Objeto obj;
 
-//será usado como uma variável global para permitir a comunicação entre funções callback e o restante
+//usado como uma variável global para facilitar a comunicação entre funções, principalmente as callback
 struct UtilidadesGlobais
 {
+    //se está criando, selecionando, transformando, deletando
     char estado;
-	obj **listaDeObjetos;
+    //ponteiro para a lista externa de objetos, cada um com seus vértices
+    obj **listaDeObjetos;
+    /*útil na hora de criar retas e polígonos, já que algumas funções são chamadas mais de uma vez
+    separadamente, e precisam "lembrar" o endereço do objeto que estão criando*/
     obj *objetoSendoCriado;
+    //referência ao objeto (ponto, linha ou polígono) selecionado
     obj *objetoSelecionado;
+    /*Guarda um (ou dois) vértices do objeto selecionado, e dependendo da forma como os ponteiros
+    ficam dá pra dizer se o que foi selecionado foi um vértice, aresta ou polígono. Meio gambiarra,
+    mas é diferente do objeto selecionado. Por exemplo, eu posso selecionar um vértice de uma reta,
+    ou a aresta de um polígono*/
     vertice** escolhidos;
+    //informa se estou arrastando algum objeto com o mouse
     char transladando;
+    //controle para a função HabilitarDesabilitarMenu
     char podeExibirMenu;
 };
 
@@ -58,4 +75,4 @@ float* MatVecMul(float a[3][3], float *b);
 void criarMenu();
 void HabilitarDesabilitarMenu();
 vertice calcularCentroide();
-void casosMatVecMul(float matrizTransformacao[3][3]);
+void trataMatVecMul(float matrizTransformacao[3][3]);
