@@ -283,6 +283,47 @@ void trataMatVecMul(float matrizTransformacao[3][3]){
 	//vetor homogêneo
 	float vetorPonto[3] = {0, 0, 1};
 	float *resultado;
+	//caso seja um vértice
+	if(ug.escolhidos[1] == NULL){
+		vetorPonto[0] = (ug.escolhidos[0])->x;
+		vetorPonto[1] = (ug.escolhidos[0])->y;
+		resultado = MatVecMul(matrizTransformacao, vetorPonto);
+		(ug.escolhidos[0])->x = resultado[0];
+		(ug.escolhidos[0])->y = resultado[1];
+	}
+	//caso seja uma aresta
+	else if(ug.escolhidos[0] != ug.escolhidos[1]){
+		vetorPonto[0] = (ug.escolhidos[0])->x;
+		vetorPonto[1] = (ug.escolhidos[0])->y;
+		resultado = MatVecMul(matrizTransformacao, vetorPonto);
+		(ug.escolhidos[0])->x = resultado[0];
+		(ug.escolhidos[0])->y = resultado[1];
+		vetorPonto[0] = (ug.escolhidos[1])->x;
+		vetorPonto[1] = (ug.escolhidos[1])->y;
+		resultado = MatVecMul(matrizTransformacao, vetorPonto);
+		(ug.escolhidos[1])->x = resultado[0];
+		(ug.escolhidos[1])->y = resultado[1];
+	}
+	//caso seja um polígono
+	else{
+		vertice *aux = ug.escolhidos[0];
+		while(aux != NULL){
+			vetorPonto[0] = aux->x;
+			vetorPonto[1] = aux->y;
+			resultado = MatVecMul(matrizTransformacao, vetorPonto);
+			aux->x = resultado[0];
+			aux->y = resultado[1];
+			aux = aux->prox;
+		}
+	}
+	//como resultado guarda alguém alocado dinamicamente na função MatVecMul, precisa ser liberado
+	free(resultado);
+	//atualiza a tela
+	glutPostRedisplay();
+	/*
+	//vetor homogêneo
+	float vetorPonto[3] = {0, 0, 1};
+	float *resultado;
 	vertice *aux = *((ug.objetoSelecionado)->vertices);
 	//aplica a transformação em cada vértice do objeto
 	while(aux != NULL){
@@ -297,6 +338,7 @@ void trataMatVecMul(float matrizTransformacao[3][3]){
 	free(resultado);
 	//atualiza a tela
 	glutPostRedisplay();
+	*/
 }
 
 //implementação da translação em ponto, reta e polígono
@@ -448,6 +490,20 @@ void display(){
 		if(aux == ug.objetoSelecionado){
 			//redão quando selecionado
 			glColor3f(1.0, 0.0, 0.0);
+			/*basicamente só pinta tudo de vermelho se o que for selecionado for ponto solto, reta solta
+			ou polígono inteiro, caso contrário destaca so o vértice ou aresta selecionado*/
+			if(((ug.objetoSelecionado)->poligono && ug.escolhidos[1] != ug.escolhidos[0])
+			|| ((ug.objetoSelecionado)->reta && ug.escolhidos[1] == NULL)){
+				glBegin(GL_POINTS);
+					glVertex2f((ug.escolhidos[0])->x, (ug.escolhidos[0])->y);
+				glEnd();
+				if(ug.escolhidos[1] != NULL){
+					glBegin(GL_POINTS);
+						glVertex2f((ug.escolhidos[1])->x, (ug.escolhidos[1])->y);
+					glEnd();
+				}
+				glColor3f(0.0, 0.0, 0.0);	
+			}
 		}else{
 			//blackão caso contrário
 			glColor3f(0.0, 0.0, 0.0);
