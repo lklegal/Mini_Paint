@@ -320,25 +320,6 @@ void trataMatVecMul(float matrizTransformacao[3][3]){
 	free(resultado);
 	//atualiza a tela
 	glutPostRedisplay();
-	/*
-	//vetor homogêneo
-	float vetorPonto[3] = {0, 0, 1};
-	float *resultado;
-	vertice *aux = *((ug.objetoSelecionado)->vertices);
-	//aplica a transformação em cada vértice do objeto
-	while(aux != NULL){
-		vetorPonto[0] = aux->x;
-		vetorPonto[1] = aux->y;
-		resultado = MatVecMul(matrizTransformacao, vetorPonto);
-		aux->x = resultado[0];
-		aux->y = resultado[1];
-		aux = aux->prox;
-	}
-	//como resultado guarda alguém alocado dinamicamente na função MatVecMul, precisa ser liberado
-	free(resultado);
-	//atualiza a tela
-	glutPostRedisplay();
-	*/
 }
 
 //implementação da translação em ponto, reta e polígono
