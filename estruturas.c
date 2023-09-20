@@ -2,10 +2,6 @@
 #include <stdlib.h>
 #include "cabecalhos.h"
 
-typedef struct{
-    float dados[3][3];
-}matriz;
-
 obj** criarListaDeObjetos(){
 	obj **listaDeObjetos = (obj**)malloc(sizeof(obj*));
 	if(listaDeObjetos != NULL){
